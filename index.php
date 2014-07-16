@@ -130,7 +130,11 @@ var dailyData = {
     ]
 };
 var daily = document.getElementById("daily").getContext("2d");
-var myDaily = new Chart(daily).Line(dailyData);
+var myDaily = new Chart(daily).Line(dailyData, {
+  scaleShowGridLines : false,
+  bezierCurve : false,
+  pointDot : false,
+});
 
 var dailyMaxTime = '<?php echo json_encode($dailyMaxTime); ?>';
 var dailyMaxSteps = '<?php echo json_encode($dailyMaxSteps); ?>';
@@ -150,7 +154,11 @@ var dailyMaxData = {
     ]
 };
 var dailyMax = document.getElementById("dailyMax").getContext("2d");
-var mydailyMax = new Chart(dailyMax).Line(dailyMaxData);
+var mydailyMax = new Chart(dailyMax).Line(dailyMaxData, {
+  scaleShowGridLines : false,
+  bezierCurve : false,
+  pointDot : false,
+});
 
 
 </script>
