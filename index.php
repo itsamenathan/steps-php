@@ -94,6 +94,7 @@ elseif ($GETJSON === 'true') {
 
 $cursteps = getCurrentSteps();
 $totalSteps = getTotalSetps();
+$totalMiles = $totalSteps/1500;
 
 echo '<html>
   <head>
@@ -101,8 +102,8 @@ echo '<html>
   <script src="Chart.js/Chart.js"></script>
   </head>
   ';
-$format = "As of <b>%s</b> I've taken <b>%s</b> steps today and <b>%s</b> overall steps.<br>";
-echo sprintf($format, $cursteps[0]['time'], $cursteps[0]['steps'], $totalSteps);
+$format = "As of <b>%s</b> I've taken <b>%s</b> steps today and <b>%s</b> overall steps. Which is about %s miles.<br>";
+echo sprintf($format, $cursteps[0]['time'], $cursteps[0]['steps'], $totalSteps, $totalMiles);
 
 
 list ($dailyTime, $dailySteps) = getDailySteps();
