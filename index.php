@@ -59,6 +59,24 @@ function getDailySteps(){
   return array($time, $steps);
 }
 
+/**
+* Function to reterive the total steps walked.
+*
+* TODO: Should probably create a query to find the total steps.
+*
+* @var N/A
+* @return intiger - total of all steps walked
+*/
+function getTotalSetps(){
+  $sum = 0;
+  $mysqli = $GLOBALS['mysqli'];
+  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM log GROUP BY DAY(time)");
+  while($row = $result->fetch_assoc()) {
+        $sum = $sum + $row['steps'];
+  }
+  return $sum;
+}
+
 $GETSTEPS = isset($_GET['steps']) ? $_GET['steps'] : '';
 $GETPASS  = isset($_GET['pass']) ? $_GET['pass'] : '';
 $GETJSON  = isset($_GET['json']) ? $_GET['json'] : '';
@@ -75,6 +93,7 @@ elseif ($GETJSON === 'true') {
 }
 
 $cursteps = getCurrentSteps();
+$totalSteps = getTotalSetps();
 
 echo '<html>
   <head>
@@ -82,8 +101,8 @@ echo '<html>
   <script src="Chart.js/Chart.js"></script>
   </head>
   ';
-$format = "As of <b>%s</b> I've taken <b>%s</b> steps today.";
-echo sprintf($format, $cursteps[0]['time'], $cursteps[0]['steps']);
+$format = "As of <b>%s</b> I've taken <b>%s</b> steps today and <b>%s</b> overall steps.<br>";
+echo sprintf($format, $cursteps[0]['time'], $cursteps[0]['steps'], $totalSteps);
 
 
 list ($dailyTime, $dailySteps) = getDailySteps();
