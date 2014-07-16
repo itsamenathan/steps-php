@@ -63,7 +63,7 @@ $GETSTEPS = isset($_GET['steps']) ? $_GET['steps'] : '';
 $GETPASS  = isset($_GET['pass']) ? $_GET['pass'] : '';
 $GETJSON  = isset($_GET['json']) ? $_GET['json'] : '';
 
-if($GETSTEPS and $GETPASS === $ACCESS_PASS){
+if(isset($GETSTEPS) and $GETPASS === $ACCESS_PASS){
   $steps = $mysqli->real_escape_string($GETSTEPS); 
   $query = sprintf("INSERT INTO log (steps) value ('%s')", $steps);
   $mysqli->real_query($query);
