@@ -77,6 +77,16 @@ function getTotalSetps(){
   return $sum;
 }
 
+/**
+* Function to calculates the total miles walked.
+*
+* @var N/A
+* @return intiger - total miles walked
+*/
+function getTotalMiles(){
+  return getTotalSetps()/2125;
+}
+
 $GETSTEPS = isset($_GET['steps']) ? $_GET['steps'] : '';
 $GETPASS  = isset($_GET['pass']) ? $_GET['pass'] : '';
 $GETJSON  = isset($_GET['json']) ? $_GET['json'] : '';
@@ -94,7 +104,7 @@ elseif ($GETJSON === 'true') {
 
 $cursteps = getCurrentSteps();
 $totalSteps = getTotalSetps();
-$totalMiles = $totalSteps/1500;
+$totalMiles = getTotalMiles();
 
 echo '<html>
   <head>
