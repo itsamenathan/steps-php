@@ -1,7 +1,7 @@
 <?php 
 $MYSQL_HOST="127.0.0.1";
-$MYSQL_DB="steps";
-$MYSQL_USER="steps";
+$MYSQL_DB="health";
+$MYSQL_USER="health";
 $MYSQL_PASS="CHANGEME";
 $ACCESS_PASS="CHANGEME";
 ?>

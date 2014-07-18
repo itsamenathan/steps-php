@@ -12,7 +12,7 @@ $mysqli = new mysqli($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS, $MYSQL_DB);
 function getCurrentSteps(){
   $rows = array();
   $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT time,steps from log ORDER BY ID DESC LIMIT 1");
+  $result = $mysqli->query("SELECT time,steps from steps ORDER BY ID DESC LIMIT 1");
   while($r = $result->fetch_assoc()) {
         $rows[] = $r;
   }
@@ -29,7 +29,7 @@ function getMaxDailySteps(){
   $time = array();
   $steps = array();
   $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM log GROUP BY DAY(time)");
+  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM steps GROUP BY DAY(time)");
   $rows = array();
   while($row = $result->fetch_assoc()) {
         $time[] = $row['time'];
@@ -49,7 +49,7 @@ function getDailySteps(){
   $steps = array();
   $prevNum = 0;
   $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT time, steps FROM log WHERE DATE(`time`) = CURDATE()");
+  $result = $mysqli->query("SELECT time, steps FROM steps WHERE DATE(`time`) = CURDATE()");
   while($row = $result->fetch_assoc()) {
         $diff = $row['steps'] - $prevNum;
         $prevNum = $row['steps'];
@@ -70,7 +70,7 @@ function getDailySteps(){
 function getTotalSetps(){
   $sum = 0;
   $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM log GROUP BY DAY(time)");
+  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM steps GROUP BY DAY(time)");
   while($row = $result->fetch_assoc()) {
         $sum = $sum + $row['steps'];
   }
@@ -93,7 +93,7 @@ $GETJSON  = isset($_GET['json']) ? $_GET['json'] : '';
 
 if(isset($GETSTEPS) and $GETPASS === $ACCESS_PASS){
   $steps = $mysqli->real_escape_string($GETSTEPS); 
-  $query = sprintf("INSERT INTO log (steps) value ('%s')", $steps);
+  $query = sprintf("INSERT INTO steps (steps) value ('%s')", $steps);
   $mysqli->real_query($query);
   exit();
 }
