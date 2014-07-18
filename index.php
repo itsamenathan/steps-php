@@ -49,7 +49,7 @@ function getDailySteps(){
   $steps = array();
   $prevNum = 0;
   $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT time, steps FROM steps WHERE DATE(`time`) = CURDATE()");
+  $result = $mysqli->query("SELECT DATE_FORMAT(time, '%H:%i') AS time,steps FROM steps WHERE DATE(`time`) = CURDATE()");
   while($row = $result->fetch_assoc()) {
         $diff = $row['steps'] - $prevNum;
         $prevNum = $row['steps'];
@@ -91,7 +91,7 @@ $GETSTEPS = isset($_GET['steps']) ? $_GET['steps'] : '';
 $GETPASS  = isset($_GET['pass']) ? $_GET['pass'] : '';
 $GETJSON  = isset($_GET['json']) ? $_GET['json'] : '';
 
-if(isset($GETSTEPS) and $GETPASS === $ACCESS_PASS){
+if(!empty($GETSTEPS) and $GETPASS === $ACCESS_PASS){
   $steps = $mysqli->real_escape_string($GETSTEPS); 
   $query = sprintf("INSERT INTO steps (steps) value ('%s')", $steps);
   $mysqli->real_query($query);
@@ -112,8 +112,8 @@ echo '<html>
   <script src="Chart.js/Chart.js"></script>
   </head>
   ';
-$format = "As of <b>%s</b> I've taken <b>%s</b> steps today and <b>%s</b> overall steps. Which is about %s miles.<br>";
-echo sprintf($format, $cursteps[0]['time'], $cursteps[0]['steps'], $totalSteps, $totalMiles);
+$format = "I've taken <b>%s</b> steps today and <b>%s</b> overall steps. Which is about %s miles.<br>";
+echo sprintf($format, $cursteps[0]['steps'], $totalSteps, $totalMiles);
 
 
 list ($dailyTime, $dailySteps) = getDailySteps();
