@@ -12,7 +12,23 @@ $mysqli = new mysqli($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS, $MYSQL_DB);
 function getCurrentSteps(){
   $rows = array();
   $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT time,steps from steps ORDER BY ID DESC LIMIT 1");
+  $result = $mysqli->query("SELECT time,steps from steps ORDER BY id DESC LIMIT 1");
+  while($r = $result->fetch_assoc()) {
+        $rows[] = $r;
+  }
+  return $rows;
+}
+
+/**
+* Function to reterive first steps.
+*
+* @var N/A
+* @return associative array - time, steps
+*/
+function getFirstSteps(){
+  $rows = array();
+  $mysqli = $GLOBALS['mysqli'];
+  $result = $mysqli->query("SELECT DATE(time) AS time,steps from steps ORDER BY id LIMIT 1");
   while($r = $result->fetch_assoc()) {
         $rows[] = $r;
   }
@@ -84,7 +100,7 @@ function getTotalSetps(){
 * @return intiger - total miles walked
 */
 function getTotalMiles(){
-  return getTotalSetps()/2125;
+  return round(getTotalSetps()/200, 2);
 }
 
 $GETSTEPS = isset($_GET['steps']) ? $_GET['steps'] : '';
@@ -105,6 +121,7 @@ elseif ($GETJSON === 'true') {
 $cursteps = getCurrentSteps();
 $totalSteps = getTotalSetps();
 $totalMiles = getTotalMiles();
+$firstSteps = getFirstSteps();
 
 echo '<html>
   <head>
@@ -112,8 +129,8 @@ echo '<html>
   <script src="Chart.js/Chart.js"></script>
   </head>
   ';
-$format = "I've taken <b>%s</b> steps today and <b>%s</b> overall steps. Which is about %s miles.<br>";
-echo sprintf($format, $cursteps[0]['steps'], $totalSteps, $totalMiles);
+$format = "I've taken <b>%s</b> steps today and <b>%s</b> overall steps since %s. Which is about %s miles.<br>";
+echo sprintf($format, $cursteps[0]['steps'], $totalSteps, $firstSteps[0]['time'], $totalMiles);
 
 
 list ($dailyTime, $dailySteps) = getDailySteps();
