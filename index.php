@@ -1,107 +1,8 @@
 <?php
 include("config.php");
+include("steps.php");
 
 $mysqli = new mysqli($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS, $MYSQL_DB); 
-
-/**
-* Function to reterive the current steps
-*
-* @var N/A
-* @return associative array - time, steps
-*/
-function getCurrentSteps(){
-  $rows = array();
-  $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT time,steps from steps ORDER BY id DESC LIMIT 1");
-  while($r = $result->fetch_assoc()) {
-        $rows[] = $r;
-  }
-  return $rows;
-}
-
-/**
-* Function to reterive first steps.
-*
-* @var N/A
-* @return associative array - time, steps
-*/
-function getFirstSteps(){
-  $rows = array();
-  $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT DATE(time) AS time,steps from steps ORDER BY id LIMIT 1");
-  while($r = $result->fetch_assoc()) {
-        $rows[] = $r;
-  }
-  return $rows;
-}
-
-/**
-* Function to reterive max steps in all days
-*
-* @var N/A
-* @return multiple arrays - time, steps
-*/
-function getMaxDailySteps(){
-  $time = array();
-  $steps = array();
-  $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM steps GROUP BY DAY(time)");
-  $rows = array();
-  while($row = $result->fetch_assoc()) {
-        $time[] = $row['time'];
-        $steps[] = $row['steps'];
-  }
-  return array($time, $steps);
-}
-
-/**
-* Function to reterive max steps in all days
-*
-* @var N/A
-* @return multiple arrays - diff between previous steps, steps
-*/
-function getDailySteps(){
-  $time = array();
-  $steps = array();
-  $prevNum = 0;
-  $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT DATE_FORMAT(time, '%H:%i') AS time,steps FROM steps WHERE DATE(`time`) = CURDATE()");
-  while($row = $result->fetch_assoc()) {
-        $diff = $row['steps'] - $prevNum;
-        $prevNum = $row['steps'];
-        $time[] = $row['time'];
-        $steps[] = $diff;
-  }
-  return array($time, $steps);
-}
-
-/**
-* Function to reterive the total steps walked.
-*
-* TODO: Should probably create a query to find the total steps.
-*
-* @var N/A
-* @return intiger - total of all steps walked
-*/
-function getTotalSetps(){
-  $sum = 0;
-  $mysqli = $GLOBALS['mysqli'];
-  $result = $mysqli->query("SELECT DATE(time) AS time, MAX(steps) AS steps FROM steps GROUP BY DAY(time)");
-  while($row = $result->fetch_assoc()) {
-        $sum = $sum + $row['steps'];
-  }
-  return $sum;
-}
-
-/**
-* Function to calculates the total miles walked.
-*
-* @var N/A
-* @return intiger - total miles walked
-*/
-function getTotalMiles(){
-  return round(getTotalSetps()/200, 2);
-}
 
 $GETSTEPS = isset($_GET['steps']) ? $_GET['steps'] : '';
 $GETPASS  = isset($_GET['pass']) ? $_GET['pass'] : '';
@@ -122,6 +23,7 @@ $cursteps = getCurrentSteps();
 $totalSteps = getTotalSetps();
 $totalMiles = getTotalMiles();
 $firstSteps = getFirstSteps();
+$goalPercent = getGoalPercent();
 
 echo '<html>
   <head>
@@ -129,8 +31,8 @@ echo '<html>
   <script src="Chart.js/Chart.js"></script>
   </head>
   ';
-$format = "I've taken <b>%s</b> steps today and <b>%s</b> overall steps since %s. Which is about %s miles.<br>";
-echo sprintf($format, $cursteps[0]['steps'], $totalSteps, $firstSteps[0]['time'], $totalMiles);
+$format = "I've taken <b>%s</b> steps today, %s%% of my goal and <b>%s</b> overall steps since %s. Which is about %s miles.<br>";
+echo sprintf($format, $cursteps[0]['steps'], $goalPercent, $totalSteps, $firstSteps[0]['time'], $totalMiles);
 
 
 list ($dailyTime, $dailySteps) = getDailySteps();
