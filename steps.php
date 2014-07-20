@@ -96,7 +96,8 @@ function getTotalSetps(){
 * @return intiger - total miles walked
 */
 function getTotalMiles(){
-  return round(getTotalSetps() / 200, 2);
+  $steps_per_mile = $GLOBALS['STEPS_PER_MILE'];
+  return round(getTotalSetps() / $steps_per_mile, 2);
 }
 
 /**
@@ -106,8 +107,9 @@ function getTotalMiles(){
 * @return intiger - total goal percentage
 */
 function getGoalPercent(){
+  $goal = $GLOBALS['GOAL_STEPS'];
   $cursteps = getCurrentSteps();
-  $percent = ($cursteps[0]['steps'] / 10000)*100;
+  $percent = ( $cursteps[0]['steps'] / $goal ) * 100;
   return round($percent);
 }
 
